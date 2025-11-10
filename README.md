@@ -9,7 +9,7 @@ This challenge showcases how dangerous unsanitized data persistence can be — e
 
 ---
 
-##Code
+## Code
 
 Since this CTF has been submitted to Hack The Box, I’m unable to share the code publicly.
 
